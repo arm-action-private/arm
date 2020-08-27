@@ -33,7 +33,7 @@ Every template output will be exported as output.
     scope: resourcegroup
     subscriptionId: <YourSubscriptionId>
     resourceGroupName: <YourResourceGroup>
-    templateLocation: <path/to/azuredeploy.json>
+    templateLocation: <path/to/azuredeploy.json> 
 ```
 
 ## Example
