@@ -3,10 +3,16 @@ import { exec } from '@actions/exec';
 import { ExecOptions } from '@actions/exec/lib/interfaces';
 import { ParseOutputs, Outputs } from '../utils/utils';
 
-export async function DeployResourceGroupScope(azPath: string, resourceGroupName: string, templateLocation: string, deploymentMode: string, deploymentName: string, parameters: string): Promise<Outputs> {    
+export async function DeployResourceGroupScope(azPath: string, validationOnly: boolean, resourceGroupName: string, templateLocation: string, deploymentMode: string, deploymentName: string, parameters: string): Promise<Outputs> {    
     // Check if resourceGroupName is set
     if (!resourceGroupName) {
         throw Error("ResourceGroup name must be set.")
+    }
+
+    // Check if the resourceGroup exists
+    var result = await exec(`"${azPath}" group show --resource-group ${resourceGroupName}`, [], { silent: true, ignoreReturnCode: true });
+    if (result != 0) {
+        throw Error("Resource Group could not be found.")
     }
 
     // create the parameter list
@@ -37,6 +43,8 @@ export async function DeployResourceGroupScope(azPath: string, resourceGroupName
     // validate the deployment
     info("Validating template...")
     await exec(`"${azPath}" deployment group validate ${azDeployParameters} -o json`, [], { silent: true });
+    if (validationOnly) 
+        return {};
 
     // execute the deployment
     info("Creating deployment...")
