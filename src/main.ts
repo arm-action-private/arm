@@ -25,11 +25,9 @@ export async function main(): Promise<Outputs> {
     const validationOnly = getInput('validationOnly') == 'true';
 
     // change the subscription context
-    if (subscriptionId != "") {
+    if (scope != "managementgroup") {
         info("Changing subscription context...")
         await exec(`"${azPath}" account set --subscription ${subscriptionId}`, [], { silent: true })
-    } else if (scope != "managementgroup") {
-        throw new Error("Subscription Id must be set on Resource Group and Subscription scope.")
     }
 
     // Run the Deployment
