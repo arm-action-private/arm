@@ -19,7 +19,8 @@ A GitHub Action to deploy ARM templates. With this action you can automate your 
 * `deploymentMode`: `Incremental`(default) (only add resources to resource group) or `Complete` (remove extra resources from resource group) or `Validate`
 * `deploymentName` Specifies the name of the resource group deployment to create.
 * `parameters` Supply deployment parameter values or local as well as remote value files.   
-
+* `managementGroupId` Specify the Id for the Management Group, only required for Management Group Deployments.
+* `validationOnly` Whenether the template should only be validated or also deployed. Valid values are: `true`, `false`
 
 
 ## Outputs
