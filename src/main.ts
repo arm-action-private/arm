@@ -25,8 +25,12 @@ export async function main(): Promise<Outputs> {
     const validationOnly = getInput('validationOnly') == 'true';
 
     // change the subscription context
-    info("Changing subscription context...")
-    await exec(`"${azPath}" account set --subscription ${subscriptionId}`, [], { silent: true })
+    if (subscriptionId != "") {
+        info("Changing subscription context...")
+        await exec(`"${azPath}" account set --subscription ${subscriptionId}`, [], { silent: true })
+    } else if (scope != "managementgroup") {
+        throw new Error("Subscription Id must be set on Resource Group and Subscription scope.")
+    }
 
     // Run the Deployment
     let result: Outputs = {};
@@ -38,7 +42,7 @@ export async function main(): Promise<Outputs> {
             result = await DeployManagementGroupScope(azPath, validationOnly, location, templateLocation, deploymentMode, deploymentName, parameters, managementGroupId)
             break
         case "subscription":
-            result = await DeploySubscriptionScope(azPath, validationOnly, location, templateLocation, deploymentName, parameters)
+            result = await DeploySubscriptionScope(azPath, validationOnly, location, templateLocation, deploymentMode, deploymentName, parameters)
             break
         default:
             throw new Error("Invalid scope. Valid values are: 'resourcegroup', 'managementgroup', 'subscription'")
