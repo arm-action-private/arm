@@ -2,6 +2,7 @@
 
 A GitHub Action to deploy ARM templates. With this action you can automate your workflow to deploy ARM templates and manage Azure resources.
 
+This action can be used to deploy Azure Resource Manager templates at different [deployment scopes](https://docs.microsoft.com/bs-latn-ba/Azure/azure-resource-manager/resource-group-template-deploy-rest#deployment-scope) -  resource group deployment scope, subscription deployment scope and management group deployment scopes. 
 
 ## Dependencies
 
@@ -11,16 +12,15 @@ A GitHub Action to deploy ARM templates. With this action you can automate your 
 ## Inputs
 
 * `scope`: **Required** Provide the scope of the deployment. Valid values are: `resourcegroup`(default) , `subscription`, `managementgroup`.
-* `templateLocation`: **Required** Specify the path or URL to the Azure Resource Manager template.
+* `templates`: **Required** Specify the path or URL to the Azure Resource Manager template.
 * `subscriptionId`: Provide the Id of the subscription which should be used.Only required for scope `resourcegroup` & `subscription`. 
 * `resourceGroupName`: Provide the name of a resource group. Only required for Resource Group Scope
-* `location`: Provide the target region, only required for Management Group or Subscription deployments.
+* `region`: Provide the target region, only required for Management Group or Subscription deployments.
 
 * `deploymentMode`: `Incremental`(default) (only add resources to resource group) or `Complete` (remove extra resources from resource group) or `Validate`
 * `deploymentName` Specifies the name of the resource group deployment to create.
 * `parameters` Supply deployment parameter values or local as well as remote value files.   
-* `managementGroupId` Specify the Id for the Management Group, only required for Management Group Deployments.
-* `validationOnly` Whenether the template should only be validated or also deployed. Valid values are: `true`, `false`
+
 
 
 ## Outputs
@@ -29,12 +29,12 @@ Every template output will be exported as output.
 ## Usage
 
 ```yml
-- uses: azure/ARM@v1
+- uses: azure/arm-deploy@v1
   with:
     scope: resourcegroup
     subscriptionId: <YourSubscriptionId>
     resourceGroupName: <YourResourceGroup>
-    templateLocation: <path/to/azuredeploy.json>
+    templates: <path/to/azuredeploy.json>
 ```
 
 ## Example
@@ -51,12 +51,12 @@ jobs:
     - uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
-    - uses: azure/ARM@v1
+    - uses: azure/arm-deploy@v1
       with:
         scope: resourcegroup
         subscriptionId: e1046c08-7072-****-****-************
         resourceGroupName: github-action-arm-rg
-        templateLocation: ./azuredeploy.json
+        templates: ./azuredeploy.json
         parameters: storageAccountType=Standard_LRS
 ```
 
@@ -65,13 +65,13 @@ In this exmaple, our template outputs `containerName`.
 
 ## Steps
 ```yaml
-- uses: azure/ARM@v1
+- uses: azure/arm-deploy@v1
   id: deploy
   with:
     scope: resourcegroup
     subscriptionId: e1046c08-7072-****-****-************
     resourceGroupName: azurearmaction
-    templateLocation: examples/template/template.json
+    templates: examples/template/template.json
     parameters: examples/template/parameters.json
     deploymentName: github-advanced-test
 ```
